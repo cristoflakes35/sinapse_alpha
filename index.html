@@ -2,9 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- VIEWPORT IMPORTANTE: Evita zoom accidental y ajusta al ancho real -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cerebrum Flow Academy - Mobile Compatible</title>
+    <title>Cerebrum Flow Academy - Director</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@400;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -14,25 +13,31 @@
             --primary: #0060ac;
             --secondary: #00b4d8;
             --dark: #0f172a;
-            --bg-body: #cbd5e1;
+            --bg-body: #1e293b; /* Fondo más oscuro para resaltar la app */
             --bg-cover: linear-gradient(135deg, #0060ac, #00b4d8);
-            --page-bg: #f8fafc;
+            --page-bg: #ffffff;
             --text-main: #334155;
             --border: #94a3b8;
-            --script-bg: #eff6ff;
-            --script-border: #3b82f6;
-            --action-bg: #ffffff;
+            --script-bg: #f0f9ff;
+            --script-border: #0ea5e9;
+            --script-text: #0c4a6e;
+            --action-bg: #f8fafc;
+            --action-border: #cbd5e1;
+            --sys-bg: #1e293b;
+            --sys-text: #ffffff;
             --alert: #ef4444;
             --success: #10b981;
             --speed: 0.8s;
         }
 
         body.dark-mode {
-            --bg-body: #0f172a;
+            --bg-body: #020617;
             --page-bg: #1e293b;
             --text-main: #f1f5f9;
-            --script-bg: rgba(59, 130, 246, 0.1);
-            --action-bg: #0f172a;
+            --script-bg: rgba(14, 165, 233, 0.1);
+            --script-text: #e0f2fe;
+            --action-bg: #020617;
+            --action-border: #334155;
             --border: #475569;
         }
 
@@ -40,75 +45,84 @@
         
         body {
             display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; background: var(--bg-body); color: var(--text-main);
-            font-family: "Nunito", sans-serif; overflow: hidden;
+            height: 100vh; width: 100vw;
+            background-color: var(--bg-body); color: var(--text-main);
+            font-family: "Nunito", sans-serif; overflow: hidden; /* Sin scroll global */
             transition: background 0.5s;
         }
 
-        /* --- HUD (Barra Superior) --- */
+        /* --- HUD --- */
         .hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border); z-index: 9999;
-            display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        body.dark-mode .hud { background: rgba(15, 23, 42, 0.95); }
+        body.dark-mode .hud { background: rgba(15, 23, 42, 0.98); }
 
-        .brand h1 { font-family: 'Manrope'; font-weight: 800; color: var(--primary); font-size: 0.9rem; text-transform: uppercase; }
-        
-        .controls { display: flex; gap: 8px; align-items: center; }
-        .timer-box { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-        .t-sect { padding: 4px 8px; text-align: center; background: var(--page-bg); }
-        .t-lbl { font-size: 0.45rem; font-weight: 700; opacity: 0.6; display: block; }
-        .t-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 0.85rem; }
+        .brand h1 { font-family: 'Manrope'; font-weight: 800; color: var(--primary); font-size: 1.1rem; text-transform: uppercase; margin-bottom: 2px; }
+        .brand p { font-size: 0.8rem; font-weight: 700; color: var(--text-main); opacity: 0.8; }
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .timer-box { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .t-sect { padding: 5px 15px; text-align: center; background: var(--page-bg); }
+        .t-lbl { font-size: 0.55rem; font-weight: 800; opacity: 0.6; display: block; letter-spacing: 0.5px; }
+        .t-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 1.1rem; }
         .t-ph { color: var(--primary); border-left: 1px solid var(--border); transition: color 0.3s; }
         .t-ph.overtime { color: var(--alert); animation: pulse 1s infinite; }
         .t-ph.bonus { color: var(--success); }
-        .btn-icon { font-size: 1.6rem; cursor: pointer; color: var(--text-main); background: none; border: none; padding: 0 5px; }
+        .btn-icon { font-size: 1.8rem; cursor: pointer; color: var(--text-main); background: none; border: none; transition: 0.2s; }
+        .btn-icon:hover { transform: scale(1.1); color: var(--primary); }
 
-        /* --- WRAPPER DESKTOP --- */
+        /* --- WRAPPER (Contenedor Maestro Escalable) --- */
         .wrapper {
-            position: relative; width: 72rem; height: 48rem; padding: 2rem;
-            perspective: 250rem; margin-top: 60px;
-            transform-origin: center top; 
-            transition: transform 0.3s ease;
-            animation: intro 4.5s forwards; 
+            position: relative; 
+            /* Dimensiones BASE del diseño (como si fuera un lienzo de diseño) */
+            width: 1200px; 
+            height: 800px; 
+            padding: 0;
+            perspective: 250rem; 
+            margin-top: 60px; /* Compensar header */
+            transform-origin: center center; /* Escalar desde el centro exacto */
+            transition: transform 0.1s linear; /* Suavidad al redimensionar */
             opacity: 0; 
+            animation: intro 2s forwards 0.5s;
         }
 
         @keyframes intro {
-            0% { transform: translateY(100px) scale(0.5) rotateX(10deg); opacity: 0; }
-            100% { opacity: 1; }
+            0% { transform: scale(0.5) translateY(200px); opacity: 0; }
+            100% { opacity: 1; } /* El transform final lo maneja JS */
         }
 
-        /* --- LIBRO 3D --- */
+        /* --- BOOK --- */
         .book { position: relative; width: 100%; height: 100%; display: flex; perspective: 250rem; }
-
+        
         .cover {
             position: absolute; top: 0; left: 0; width: 50%; height: 100%;
-            background: var(--bg-cover); border-radius: 10px 0 0 10px;
-            z-index: 500; 
-            transform-origin: right; transition: transform 1.5s cubic-bezier(.645, .045, .355, 1);
+            background: var(--bg-cover); border-radius: 12px 0 0 12px;
+            z-index: 500; transform-origin: right; transition: transform 1.5s cubic-bezier(.645, .045, .355, 1);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             color: white; padding: 2rem; text-align: center;
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.3);
-            backface-visibility: hidden;
+            box-shadow: 10px 10px 50px rgba(0,0,0,0.5); backface-visibility: hidden;
         }
-        .cover.open { transform: rotateY(180deg); z-index: -1; }
+        .cover.open { transform: rotateY(180deg); z-index: -1; pointer-events: none; }
 
+        /* --- PÁGINAS --- */
         .book-page {
             position: absolute; width: 50%; height: 100%;
-            background: var(--page-bg); display: flex; flex-direction: column;
-            padding: 2.5rem; border: 1px solid var(--border);
+            background: transparent; display: flex; flex-direction: column;
             transition: transform var(--speed) cubic-bezier(.645, .045, .355, 1);
             transform-origin: left; transform-style: preserve-3d;
-            pointer-events: none; 
+            pointer-events: none; /* El contenedor no bloquea */
         }
-        .book.opened .book-page { pointer-events: auto; }
-
-        .page-left { left: 0; z-index: 5; border-radius: 10px 0 0 10px; }
-        .page-right { right: 0; border-radius: 0 10px 10px 0; }
+        
+        /* IZQUIERDA (SETUP) - CORRECCIÓN INTERACCIÓN */
+        .page-left { 
+            left: 0; z-index: 10; /* Z-Index alto para asegurar click */
+            border-radius: 12px 0 0 12px; 
+        }
+        
+        .page-right { right: 0; border-radius: 0 12px 12px 0; }
 
         #page-1 { z-index: 30; }
         #page-2 { z-index: 20; }
@@ -120,121 +134,94 @@
 
         .page-right.turn { transform: rotateY(-180deg); }
 
-        .page-front, .page-back {
+        .page-front, .page-back, .page-left-content {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 2rem; backface-visibility: hidden;
+            padding: 3rem 2.5rem; backface-visibility: hidden;
             background-color: var(--page-bg); 
-            overflow-y: auto; border-left: 1px solid var(--border);
+            overflow-y: auto; /* SCROLL ACTIVO */
+            border: 1px solid var(--border);
+            pointer-events: auto; /* INTERACCIÓN ACTIVA */
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.02);
         }
-        .page-front { transform: rotateY(0deg); z-index: 2; }
-        .page-back { transform: rotateY(180deg); z-index: 1; }
+        
+        .page-left-content { border-radius: 12px 0 0 12px; border-right: 1px solid var(--border); }
+        .page-front { transform: rotateY(0deg); z-index: 2; border-radius: 0 12px 12px 0; border-left: 1px solid var(--border); }
+        .page-back { transform: rotateY(180deg); z-index: 1; border-radius: 12px 0 0 12px; border-right: 1px solid var(--border); }
 
-        /* --- ESTILOS INTERNOS --- */
-        .phase-head { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .badge { background: var(--primary); color: white; padding: 4px 8px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
-        h2 { color: var(--primary); font-family: 'Manrope'; font-size: 1.3rem; }
+        /* --- CONTENIDO --- */
+        .phase-head { border-bottom: 2px solid var(--border); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .badge { background: var(--primary); color: white; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; }
+        h2 { color: var(--primary); font-family: 'Manrope'; font-size: 1.5rem; font-weight: 800; }
 
-        .block { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--border); }
-        .ctx { font-size: 0.65rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .script { background: var(--script-bg); border-left: 4px solid var(--script-border); padding: 10px; border-radius: 0 8px 8px 8px; margin-bottom: 8px; position: relative; }
-        .script::before { content: "🗣️ DI:"; position: absolute; top: -8px; left: 0; background: var(--script-border); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 3px; }
-        .txt { font-size: 0.95rem; line-height: 1.4; color: var(--text-main); }
-        .action { background: var(--action-bg); border: 1px dashed var(--border); padding: 8px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .sys { background: #1e293b; color: white; padding: 8px; border-radius: 4px; font-family: 'Roboto Mono'; font-size: 0.8rem; margin: 8px 0; display: flex; align-items: center; gap: 10px; }
-        .sys.ok { border-left: 3px solid var(--success); }
+        .block { margin-bottom: 25px; }
+        .ctx-label { font-size: 0.75rem; font-weight: 800; color: var(--text-main); opacity: 0.6; text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; border-bottom: 1px solid var(--border); padding-bottom: 4px; width: fit-content; }
+        
+        .script { background: var(--script-bg); border-left: 5px solid var(--script-border); padding: 15px 20px; border-radius: 0 10px 10px 10px; margin-bottom: 12px; position: relative; }
+        .script::before { content: "🗣️ DI:"; position: absolute; top: -10px; left: 0; background: var(--script-border); color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 4px 4px 0 0; }
+        .txt { font-size: 1rem; line-height: 1.6; color: var(--script-text); font-weight: 500; }
+        .txt strong { font-weight: 800; color: var(--primary); }
 
-        .btn-next { 
-            float: right; background: var(--dark); color: white; padding: 12px 20px; 
-            border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; 
-            display: flex; align-items: center; gap: 5px; margin-top: 15px; font-size: 0.9rem;
-            width: fit-content;
-        }
-        .btn-next:active { transform: scale(0.98); }
-        .btn-next:disabled { background: var(--success); cursor: not-allowed; transform: none; opacity: 0.9; }
+        .action { background: var(--action-bg); border: 1px dashed var(--action-border); padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; color: var(--text-main); }
+        .action i { font-size: 1.3rem; color: var(--secondary); margin-top: 2px;}
 
-        .chk-item { background: var(--action-bg); border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
-        .chk-box { width: 20px; height: 20px; border: 2px solid var(--primary); flex-shrink: 0; }
-        .chk-item.checked { opacity: 0.6; }
+        .sys { background: var(--sys-bg); color: var(--sys-text); padding: 12px 15px; border-radius: 6px; font-family: 'Roboto Mono'; font-size: 0.85rem; margin: 15px 0; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .sys.ok { border-left: 4px solid var(--success); }
+
+        .resp { display: inline-block; background: var(--bg-body); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+
+        .faq-block { background: rgba(0,0,0,0.02); border-radius: 8px; padding: 10px; border: 1px solid var(--border); margin-top:10px; }
+        .faq-item { margin-bottom: 8px; }
+        .faq-q { font-weight: 800; color: var(--primary); font-size: 0.85rem; }
+        .faq-a { font-style: italic; color: var(--text-main); font-size: 0.85rem; margin-left: 10px; }
+
+        .btn-next { float: right; background: var(--dark); color: white; padding: 14px 28px; border-radius: 30px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; margin-top: 20px; font-size: 0.95rem; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: auto; }
+        .btn-next:hover { background: var(--primary); transform: translateY(-2px); }
+        .btn-next:disabled { background: var(--success); cursor: not-allowed; transform: none; opacity: 1; box-shadow: none; }
+
+        /* CHECKBOXES CON ZONA DE CLIC GRANDE */
+        .chk-item { background: var(--action-bg); border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 600; transition: 0.2s; position: relative; z-index: 20;}
+        .chk-box { width: 22px; height: 22px; border: 2px solid var(--primary); border-radius: 4px; flex-shrink: 0; display: grid; place-items: center; }
+        .chk-item.checked { opacity: 0.6; text-decoration: line-through; }
         .chk-item.checked .chk-box { background: var(--primary); }
+        .chk-item.checked .chk-box::after { content: '✓'; color: white; font-size: 14px; }
 
         @keyframes pulse { 50% { opacity: 0.5; } }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        
+        /* Scrollbar Ancho */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; border: 3px solid var(--page-bg); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* --- MÓVIL Y TABLET (Max Width 1024px) --- */
-        /* Eliminamos el 3D para asegurar compatibilidad en iOS/Android */
+        /* --- MÓVIL --- */
         @media (max-width: 1024px) {
-            body { 
-                overflow-y: auto; 
-                display: block; 
-                padding-top: 60px; /* Espacio para el HUD */
-                height: auto;
-            }
-            
-            .wrapper {
-                width: 100%; 
-                height: auto; 
-                padding: 15px; 
-                margin: 0;
-                transform: none !important; 
-                animation: none; 
-                opacity: 1;
-                perspective: none;
-            }
-
-            .book { display: block; perspective: none; width: 100%; height: auto;}
-            
-            /* Ocultar portada en móvil para ir directo al contenido */
+            body { overflow-y: auto; display: block; padding-top: 70px; height: auto; }
+            .wrapper { width: 100%; height: auto; padding: 15px; margin: 0; transform: none !important; animation: none; opacity: 1; perspective: none; }
+            .book { display: block; perspective: none; width: 100%; }
             .cover { display: none; }
-
-            .book-page {
-                position: relative; width: 100%; height: auto;
-                left: auto; top: auto;
-                transform: none !important;
-                border: none;
-                background: transparent;
-                padding: 0;
-                display: none; /* Ocultar todo */
-                opacity: 1 !important;
-                pointer-events: auto !important;
+            .book-page, .page-left, .page-front, .page-back, .page-left-content { 
+                position: relative; width: 100%; height: auto; left: auto; top: auto; 
+                transform: none !important; border: none; background: var(--page-bg); 
+                padding: 20px; display: none; opacity: 1 !important; 
+                pointer-events: auto !important; border-radius: 12px; margin-bottom: 20px; 
+                box-shadow: 0 2px 15px rgba(0,0,0,0.05); border: 1px solid var(--border); 
             }
-
-            /* Estilos Tarjeta Móvil */
-            .page-left, .page-front, .page-back {
-                position: relative; width: 100%; height: auto;
-                transform: none !important;
-                backface-visibility: visible;
-                display: none; /* Ocultar caras */
-                background: var(--page-bg);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 20px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            }
-
-            /* El botón para iniciar sesión en móvil */
-            #p-setup.mobile-active { display: block; }
-            #p-setup .page-left { display: block; z-index: 100; }
-
-            /* Clase para mostrar la fase actual */
-            .mobile-active { display: block !important; animation: slideUp 0.4s ease-out; }
-            
+            .mobile-active { display: block !important; animation: fadeIn 0.4s ease-out; }
             .btn-next { width: 100%; justify-content: center; }
+            #p-setup .page-left-content.mobile-active { display: block; }
         }
-
-        @keyframes slideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
-
+        @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <nav class="hud">
         <div class="brand">
-            <h1>CEREBRUM FLOW</h1>
+            <h1>CEREBRUM FLOW ACADEMY</h1>
+            <p>SESIÓN 1: NEURAL LINK</p>
         </div>
         <div class="controls">
-            <div id="drift" class="drift-pill" style="display:none;"></div> <!-- Oculto en móvil por espacio -->
+            <div id="drift" style="font-family:'Roboto Mono'; font-weight:bold; font-size:0.8rem; display:none;"></div>
             <div class="timer-box">
                 <div class="t-sect"><span class="t-lbl">TOTAL</span><span class="t-val" id="t-total">40:00</span></div>
                 <div class="t-sect t-ph"><span class="t-lbl">FASE</span><span class="t-val" id="t-phase">00:00</span></div>
@@ -247,86 +234,228 @@
     <div class="wrapper">
         <div class="book" id="book-container">
             
-            <!-- PORTADA (Desktop Only) -->
+            <!-- PORTADA -->
             <div class="cover" id="cover">
-                <i class='bx bxs-brain' style="font-size: 5rem; margin-bottom: 20px;"></i>
-                <h1>SYNAPSE 4.0</h1>
-                <h3>Guía Maestra</h3>
-                <p>Cargando sistema...</p>
+                <i class='bx bxs-brain' style="font-size: 6rem; margin-bottom: 20px;"></i>
+                <h1>CEREBRUM FLOW</h1>
+                <h2>ACADEMY</h2>
+                <p style="margin-top:20px; font-family:'Roboto Mono'">Iniciando Sesión S1...</p>
             </div>
 
-            <!-- IZQUIERDA: SETUP -->
+            <!-- IZQUIERDA: SETUP (Página Estática) -->
             <div class="book-page page-left" id="p-setup">
-                <div class="phase-head">
-                    <h2>⚙️ SETUP</h2>
-                    <span class="badge" style="background:#64748b">PREVIA</span>
+                <div class="page-left-content">
+                    <div class="phase-head">
+                        <h2>⚙️ SETUP</h2>
+                        <span class="badge" style="background:#64748b">PREVIA</span>
+                    </div>
+                    <div class="block">
+                        <span class="ctx-label">PROTOCOLO DE PREPARACIÓN</span>
+                        <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> <span><strong>Pantalla:</strong> Lista con Slides (Logo -> ITS Dormido -> Algoritmo).</span></div>
+                        <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> <span><strong>Mesa:</strong> Cubierta con tela (escondiendo Tablet, Robot, Cartas).</span></div>
+                        <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> <span><strong>Suelo:</strong> Cintas de color marcando las 3 zonas.</span></div>
+                        <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> <span><strong>Audio:</strong> Música de fondo "Futuristic Upbeat" lista.</span></div>
+                    </div>
+                    <div class="block">
+                        <span class="ctx-label">OBJETIVO PEDAGÓGICO</span>
+                        <p style="font-size:0.95rem; line-height:1.5;">Validar al alumno como "Operador" (autoridad sobre la máquina) y establecer el concepto de Algoritmo vs Bug.</p>
+                    </div>
+                    <button class="btn-next" onclick="startMobileSession(this)" id="btn-start-mobile" style="width:100%; justify-content: center;">
+                        INICIAR SESIÓN (FASE 1) <i class='bx bx-rocket'></i>
+                    </button>
                 </div>
-                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Pantalla: Slide ITS Dormido</div>
-                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Mesa: Oculta con tela</div>
-                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Audio: Música Upbeat</div>
-                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Suelo: Zonas marcadas</div>
-                <br>
-                <div class="block">
-                    <span class="ctx">OBJETIVO</span>
-                    <p style="font-size:0.9rem">Establecer roles (Ingeniero/Operador) y validar la autoridad del alumno.</p>
-                </div>
-                
-                <!-- Botón de Inicio (Visible en Móvil o Desktop) -->
-                <button class="btn-next" onclick="startSession(this)" id="btn-start-session" style="width:100%; justify-content: center;">
-                    INICIAR SESIÓN <i class='bx bx-rocket'></i>
-                </button>
             </div>
 
-            <!-- HOJA 1 -->
+            <!-- HOJA 1: FASE 1 & FASE 2 -->
             <div class="book-page page-right" id="page-1">
-                <div class="page-front" id="phase-1" data-min="8">
-                    <div class="phase-head"><h2>INPUT</h2> <span class="badge">FASE 1 • 08 MIN</span></div>
-                    <div class="block"><span class="ctx">⚡ BIENVENIDA</span><div class="action"><i class='bx bx-door-open'></i> Recibir con energía.</div><div class="script"><div class="txt">"¡Buenos días! ¡Qué energía! Levanten la mano los que vienen listos para inventar cosas increíbles... ¡Pasen y permanezcan de pie!"</div></div></div>
-                    <div class="block"><span class="ctx">🏛️ CONTEXTO</span><div class="script"><div class="txt">"Bienvenidos a <strong>Cerebrum Flow Academy</strong>. Aquí venimos a enseñarle a nuestro cerebro a controlar la tecnología."</div></div></div>
-                    <div class="block"><span class="ctx">🆔 ROLES</span><div class="script"><div class="txt">"Yo soy el INGENIERO. Ustedes son <strong>OPERADORES</strong>. La máquina no piensa sola; el Operador tiene el control."</div></div></div>
-                    <div class="block"><span class="ctx">🗺️ ZONAS</span><div class="action"><i class='bx bx-map'></i> Señalar zonas.</div><div class="script"><div class="txt">"AZUL: Pensamos. NARANJA: Construimos. VERDE: Robot se mueve."</div></div><div class="action"><strong>Verificación:</strong> ¿Quién manda? ¡EL OPERADOR!</div></div>
-                    <button class="btn-next" onclick="nextPhase(1, this)">COMPLETAR FASE 1 <i class='bx bx-chevron-right'></i></button>
+                
+                <!-- FASE 1: INPUT -->
+                <div class="page-front" id="phase-1" data-min="6">
+                    <div class="phase-head">
+                        <h2>INPUT</h2> <span class="badge">FASE 1 • 06 MIN</span>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">00:00 - 02:00 | BIENVENIDA DE ALTA ENERGÍA</span>
+                        <div class="action"><i class='bx bx-door-open'></i> El Profesor recibe en la puerta, sonriendo y con mucha actitud.</div>
+                        <div class="script"><div class="txt">"¡Buenos días! ¡Qué energía! Levanten la mano los que vienen listos para inventar cosas increíbles... ¡Eso es! Pasen y permanezcan de pie."</div></div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">02:00 - 04:00 | CONTEXTO: ¿QUÉ ES ESTE LUGAR?</span>
+                        <div class="script"><div class="txt">"Escuchen bien: Esto no es un salón de clases normal. Bienvenidos a <strong>Cerebrum Flow Academy</strong>. Este es un centro de entrenamiento especial donde no venimos solo a estudiar... venimos a enseñarle a nuestro cerebro a controlar la tecnología y a construir el futuro."</div></div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">04:00 - 06:00 | DEFINICIÓN DE ROLES</span>
+                        <div class="script"><div class="txt">"Yo soy el Ing. [Tu Apellido], su Director. ¿Saben por qué soy Ingeniero? Porque mi trabajo es resolver problemas difíciles y entender cómo funcionan las cosas por dentro."</div></div>
+                        <div class="script"><div class="txt">"Y ustedes, a partir de hoy, son <strong>OPERADORES</strong>. ¿Saben qué es eso? El Operador es el que tiene el control. La máquina no piensa sola; el Operador es quien presiona el botón y da la orden. Sin Operador, el robot es solo plástico. Ustedes tienen el poder."</div></div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">06:00 | EL TOUR DE LAS ZONAS</span>
+                        <div class="script"><div class="txt">"Un buen Operador conoce su territorio. Señalen con el dedo hacia donde yo diga:"</div></div>
+                        <div class="action"><i class='bx bx-map-pin'></i> <strong>ZONA AZUL (Sillas):</strong> "Ahí PENSAMOS. Zona de Silencio."</div>
+                        <div class="action"><i class='bx bx-map-pin'></i> <strong>ZONA NARANJA (Mesas):</strong> "Ahí CONSTRUIMOS. Zona de Manos."</div>
+                        <div class="action"><i class='bx bx-map-pin'></i> <strong>ZONA VERDE (Piso):</strong> "Ahí EL ROBOT SE MUEVE. Si camina, no se toca."</div>
+                        
+                        <div class="script"><div class="txt">VERIFICACIÓN: "¿Quién manda a la máquina?"</div></div>
+                        <div class="resp">Alumnos: "¡El Operador!"</div>
+                        <div class="script"><div class="txt">VERIFICACIÓN: "¿Dónde construyo?"</div></div>
+                        <div class="resp">Alumnos: "¡Naranja!"</div>
+                    </div>
+
+                    <button class="btn-next" onclick="nextPhase(1, this)">COMPLETAR FASE 1 <i class='bx bx-check-circle'></i></button>
                 </div>
-                <div class="page-back" id="phase-2" data-min="7">
-                    <div class="phase-head"><h2>PROCESSING</h2> <span class="badge">FASE 2 • 07 MIN</span></div>
-                    <div class="block"><span class="ctx">✨ LA REVELACIÓN</span><div class="action"><i class='bx bxs-layer'></i> Quitar tela. Mostrar herramientas.</div><div class="script"><div class="txt">"Miren sus herramientas. ¿Quién quiere usar el poder del Operador? ¡Digan YO!"</div></div></div>
-                    <div class="block"><span class="ctx">🔋 ACTIVACIÓN</span><div class="sys">🖥️ PANTALLA: ITS Gris (Dormido)</div><div class="script"><div class="txt">"A la cuenta de 3: ¡DESPIERTA CEREBRUM!"</div></div></div>
-                    <div class="block"><span class="ctx">🎉 REACCIÓN</span><div class="sys ok">🔊 SONIDO: Éxito + ITS Color</div><div class="script"><div class="txt"><strong>ITS:</strong> "Sistemas al 100%. Saluden a la cámara en 3, 2, 1..."</div></div></div>
-                    <button class="btn-next" onclick="nextPhase(2, this)">COMPLETAR FASE 2 <i class='bx bx-chevron-right'></i></button>
+
+                <!-- FASE 2: PROCESSING -->
+                <div class="page-back" id="phase-2" data-min="10">
+                    <div class="phase-head">
+                        <h2>PROCESSING</h2> <span class="badge">FASE 2 • 10 MIN</span>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">06:00 - 09:00 | EL ARSENAL & EL DESPERTAR</span>
+                        <div class="script"><div class="txt">"Siéntense en Zona Azul. Miren sus herramientas."</div></div>
+                        <div class="action"><i class='bx bxs-magic-wand'></i> Quita la tela. Muestra Tablet, Robot y Cartas.</div>
+                        <div class="script"><div class="txt">"Miren estas herramientas. Hoy las estamos 'Desbloqueando'. No se tocan aún. Son instrumentos de poder que usarán en sus misiones. ¿Quién quiere controlarlas? ¡Digan YO!"</div></div>
+                        <div class="resp">Alumnos: "¡YOOOO!"</div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">09:00 - 13:00 | ¿QUÉ ES CEREBRUM CORE? (ITS)</span>
+                        <div class="script"><div class="txt">"Miren la pantalla... está dormido (Gris). Ese es <strong>Cerebrum Core</strong>. Es el cerebro digital de la academia. Él observa, escucha y nos guía, pero funciona con energía humana. Si no le damos órdenes, no despierta."</div></div>
+                        
+                        <div class="faq-block">
+                            <div class="faq-item">
+                                <span class="faq-q">P: ¿Está vivo?</span> <span class="faq-a">R: "No, es inteligencia artificial. Código puro."</span>
+                            </div>
+                            <div class="faq-item">
+                                <span class="faq-q">P: ¿Nos escucha?</span> <span class="faq-a">R: "Solo cuando activamos sus sensores."</span>
+                            </div>
+                        </div>
+
+                        <div class="script"><div class="txt">"¡Vamos a despertarlo! A la cuenta de 3, griten: '¡DESPIERTA CEREBRUM!'"</div></div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">13:00 - 16:00 | REACCIÓN DEL SISTEMA</span>
+                        <div class="sys ok">🔊 SONIDO: ITS Encendido + Audio Éxito.</div>
+                        <div class="script"><div class="txt"><strong>ITS (AUDIO):</strong> "Sistemas al 100%. Hola Operadores. Necesito calibrar sensores. Saluden a la cámara en 3, 2, 1..."</div></div>
+                        <div class="action"><i class='bx bx-camera'></i> Los niños saludan a la pantalla -> ITS hace sonido de escaneo.</div>
+                    </div>
+
+                    <button class="btn-next" onclick="nextPhase(2, this)">COMPLETAR FASE 2 <i class='bx bx-check-circle'></i></button>
                 </div>
             </div>
 
-            <!-- HOJA 2 -->
+            <!-- HOJA 2: FASE 3 & FASE 4 -->
             <div class="book-page page-right" id="page-2">
-                <div class="page-front" id="phase-3" data-min="15">
-                    <div class="phase-head"><h2>CONCEPT</h2> <span class="badge">FASE 3 • 15 MIN</span></div>
-                    <div class="block"><span class="ctx">🧠 DEFINICIÓN</span><div class="script"><div class="txt">"Un ALGORITMO es una lista de pasos en orden. ¡Como una receta!"</div></div><div class="action"><i class='bx bx-music'></i> Ritmo: ¡AL-GO-RIT-MO!</div></div>
-                    <div class="block"><span class="ctx">✅ DINÁMICA 1</span><div class="script"><div class="txt">"Sigan el algoritmo de la pantalla."</div></div><div class="sys">🖥️ Aplauso -> Silencio -> Saludo</div></div>
-                    <div class="block" style="background:rgba(239,68,68,0.1); padding:10px; border-radius:8px;"><span class="ctx" style="color:var(--alert)">❌ DINÁMICA 2: BUG</span><div class="script"><div class="txt">"Sigan mi algoritmo: 1. Sacar lengua. 2. Espalda a pared. 3. Aplaudir sin despegar manos de la pared."</div></div><div class="action"><i class='bx bxs-error'></i> Caos y risas.</div><div class="script"><div class="txt">"Fue imposible. Cuando el algoritmo falla, se llama BUG."</div></div></div>
-                    <button class="btn-next" onclick="nextPhase(3, this)">COMPLETAR FASE 3 <i class='bx bx-chevron-right'></i></button>
+                
+                <!-- FASE 3: CONCEPT -->
+                <div class="page-front" id="phase-3" data-min="12">
+                    <div class="phase-head">
+                        <h2>CONCEPT</h2> <span class="badge">FASE 3 • 12 MIN</span>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">16:00 - 20:00 | DEFINICIÓN DE ALGORITMO</span>
+                        <div class="script"><div class="txt">"Cerebrum solo entiende <strong>ALGORITMOS</strong>. Un algoritmo es una lista de pasos en orden. ¡Como una receta de cocina! Si te saltas un paso, el pastel sale mal."</div></div>
+                        <div class="action"><i class='bx bx-music'></i> Ritmo: "Repitan aplaudiendo: ¡AL-GO-RIT-MO!"</div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">20:00 - 24:00 | DINÁMICA 1: ÉXITO CON ITS</span>
+                        <div class="script"><div class="txt">"Sigan el algoritmo de la pantalla."</div></div>
+                        <div class="sys">🖥️ PANTALLA: 👏 (Aplauso) -> 🤐 (Silencio) -> 🫡 (Saludo).</div>
+                        <div class="action"><i class='bx bx-check'></i> Si lo hacen bien -> ITS muestra Palomita Verde. "Algoritmo Correcto".</div>
+                    </div>
+
+                    <div class="block" style="background:rgba(239,68,68,0.05); padding:15px; border-radius:10px; border:1px solid var(--alert);">
+                        <span class="ctx-label" style="color:var(--alert); border-color:var(--alert);">24:00 - 30:00 | DINÁMICA 2: EL FALLO (BUG)</span>
+                        <div class="script"><div class="txt">"Ahora sigan MI algoritmo. De pie. Paso 1: Sacar lengua... Paso 2: Tocar pared con espalda... Paso 3: Aplaudir sin despegar manos de la pared."</div></div>
+                        <div class="action"><i class='bx bxs-error'></i> Caos: Intentan y fallan físicamente. Risas.</div>
+                        <div class="script"><div class="txt">"¿Pudieron? <strong>NO</strong>. ¿Por qué? Porque mi instrucción estaba mal. Físicamente es imposible aplaudir si tus manos tocan la pared. Cuando la instrucción falla, se llama <strong>BUG</strong>. ¡Griten BUG!"</div></div>
+                        <div class="resp" style="color:var(--alert)">Alumnos: "¡BUG!"</div>
+                    </div>
+
+                    <button class="btn-next" onclick="nextPhase(3, this)">COMPLETAR FASE 3 <i class='bx bx-check-circle'></i></button>
                 </div>
-                <div class="page-back" id="phase-4" data-min="5">
-                    <div class="phase-head"><h2>SHELL DESIGN</h2> <span class="badge">FASE 4 • 05 MIN</span></div>
-                    <div class="block"><span class="ctx">🧘 TRANSICIÓN</span><div class="script"><div class="txt">"Siéntense. Para operar la próxima semana, necesitan su Credencial."</div></div><div class="action"><i class='bx bx-file'></i> Entregar hojas ID.</div></div>
-                    <div class="block"><span class="ctx">🎨 ACTIVIDAD</span><div class="script"><div class="txt">"Dibujen su cerebro lleno de energía de Operador. Tienen 4 minutos."</div></div></div>
-                    <button class="btn-next" onclick="nextPhase(4, this)">COMPLETAR FASE 4 <i class='bx bx-chevron-right'></i></button>
+
+                <!-- FASE 4: SHELL DESIGN -->
+                <div class="page-back" id="phase-4" data-min="8">
+                    <div class="phase-head">
+                        <h2>SHELL DESIGN</h2> <span class="badge">FASE 4 • 08 MIN</span>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">30:00 - 31:00 | TRANSICIÓN (CALM DOWN)</span>
+                        <div class="script"><div class="txt">"Siéntense. Para operar la próxima semana, necesitan su Credencial Oficial."</div></div>
+                        <div class="action"><i class='bx bx-id-card'></i> Entrega hojas de ID impresas y colores.</div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">31:00 - 36:00 | VISIÓN DEL FUTURO (CURRICULUM)</span>
+                        <div class="script"><div class="txt">"Mientras dibujan su cerebro lleno de energía, escuchen bien: En <strong>Cerebrum Flow Academy</strong>, este año haremos cosas increíbles..."</div></div>
+                        <div class="action"><i class='bx bx-rocket'></i> Narrativa inspiradora mientras dibujan:</div>
+                        <ul style="margin-left: 20px; font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px;">
+                            <li>"Construiremos robots que caminan."</li>
+                            <li>"Programaremos videojuegos con sus propias reglas."</li>
+                            <li>"Usaremos Inteligencia Artificial para crear arte."</li>
+                        </ul>
+                        <div class="script"><div class="txt">"Su credencial es la llave para todo eso. Dibujen con fuerza."</div></div>
+                        <div class="action"><i class='bx bx-show'></i> Monitoreo Activo: El profesor camina: "Excelente, colega Ingeniero. Buen diseño."</div>
+                    </div>
+
+                    <button class="btn-next" onclick="nextPhase(4, this)">COMPLETAR FASE 4 <i class='bx bx-check-circle'></i></button>
                 </div>
             </div>
 
-            <!-- HOJA 3 -->
+            <!-- HOJA 3: FASE 5 & FIN -->
             <div class="book-page page-right" id="page-3">
-                <div class="page-front" id="phase-5" data-min="5">
-                    <div class="phase-head"><h2>OUTPUT</h2> <span class="badge">FASE 5 • 05 MIN</span></div>
-                    <div class="block"><span class="ctx">📤 UPLOAD</span><div class="script"><div class="txt">"Muestren su hoja a la pantalla."</div></div><div class="sys ok">🔊 SONIDO: Data Uploaded</div></div>
-                    <div class="block"><span class="ctx">🔄 REPASO FINAL</span><div class="script"><div class="txt">"Si falla es un... ¡BUG! ¿Quién manda? ¡EL OPERADOR!"</div></div></div>
+                
+                <!-- FASE 5: OUTPUT -->
+                <div class="page-front" id="phase-5" data-min="4">
+                    <div class="phase-head">
+                        <h2>OUTPUT</h2> <span class="badge">FASE 5 • 04 MIN</span>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">36:00 - 38:00 | RECOLECCIÓN DIGITAL</span>
+                        <div class="script"><div class="txt">"¡Tiempo! Levanten su hoja. Muestren su ID a la pantalla para que Cerebrum la guarde en la base de datos."</div></div>
+                        <div class="sys ok">🔊 SONIDO: "Data Uploaded" (Escaneo futurista).</div>
+                    </div>
+
+                    <div class="block">
+                        <span class="ctx-label">38:00 - 40:00 | ACTIVE RECALL FINAL</span>
+                        <div class="script"><div class="txt">"Antes de salir, repasemos para ver si el cerebro guardó la información:"</div></div>
+                        
+                        <div class="script"><div class="txt">"Si la instrucción falla, ¿es un...?"</div></div>
+                        <div class="resp">Alumnos: "¡BUG!"</div>
+                        
+                        <div class="script"><div class="txt">"¿Quién manda a la máquina?"</div></div>
+                        <div class="resp">Alumnos: "¡El Operador!"</div>
+                        
+                        <div class="script"><div class="txt">"¡Misión cumplida! Nos vemos la próxima semana, Operadores."</div></div>
+                    </div>
+
                     <button class="btn-next" onclick="nextPhase(5, this)">FINALIZAR SESIÓN <i class='bx bx-flag'></i></button>
                 </div>
+
+                <!-- CONTRAPORTADA / RESUMEN -->
                 <div class="page-back" id="phase-final">
-                    <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                        <i class='bx bxs-trophy' style="font-size:5rem; color:orange; margin-bottom:20px;"></i>
-                        <h2>¡Sesión Finalizada!</h2>
-                        <p id="final-msg" style="margin:10px 0; font-weight:bold;">...</p>
-                        <button class="btn-next" onclick="location.reload()">REINICIAR</button>
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                        <i class='bx bxs-trophy' style="font-size:6rem; color:#f59e0b; margin-bottom:20px; filter: drop-shadow(0 5px 15px rgba(245,158,11,0.4));"></i>
+                        <h2 style="font-size:2rem; margin-bottom:10px;">¡SESIÓN FINALIZADA!</h2>
+                        <p style="color:var(--text-main); font-size:1.1rem; margin-bottom:30px;">Gran trabajo dirigiendo a los operadores.</p>
+                        
+                        <div style="background:var(--action-bg); padding:20px; border-radius:10px; border:1px solid var(--border); width:80%;">
+                            <p id="final-msg" style="font-weight:800; font-size:1.2rem; color:var(--primary);">...</p>
+                        </div>
+
+                        <button class="btn-next" onclick="location.reload()" style="margin-top:40px; background:var(--dark);">
+                            REINICIAR SISTEMA <i class='bx bx-refresh'></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -335,21 +464,21 @@
     </div>
 
     <script>
-        // --- VARS ---
+        // --- VARIABLES GLOBALES ---
         let totalTime = 40 * 60;
         let phaseTime = 0;
-        let drift = 0; 
+        let drift = 0;
         let timer = null;
         let running = false;
-        let basePhaseTime = 0;
+        let basePhaseTime = 0; // Tiempo original de la fase
         let isMobile = false;
 
-        // --- INIT ---
+        // --- INICIALIZACIÓN ---
         window.addEventListener('load', () => {
             checkDevice();
             window.addEventListener('resize', checkDevice);
 
-            // Cargar datos Fase 1 (pero no mostrar aún en móvil)
+            // Cargar tiempo de Fase 1
             const p1 = document.getElementById('phase-1');
             phaseTime = parseInt(p1.getAttribute('data-min')) * 60;
             basePhaseTime = phaseTime; 
@@ -362,59 +491,80 @@
                 setTimeout(() => { cover.classList.add('open'); bookContainer.classList.add('opened'); }, 3000); 
                 setTimeout(() => { cover.style.zIndex = -1; }, 4000);
             } else {
-                // Móvil: Mostrar Setup
+                // Móvil: Mostrar Setup Directamente
                 document.getElementById('p-setup').classList.add('mobile-active');
             }
         });
 
         function checkDevice() {
-            // Detectar si es pantalla pequeña (Móvil/Tablet vertical)
+            // Detección robusta de móvil por ancho
             isMobile = window.innerWidth <= 1024;
             
             const wrapper = document.querySelector('.wrapper');
             if (!isMobile) {
-                // Escalado para desktop
-                let scale = 1;
-                if (window.innerWidth < 1200) scale = window.innerWidth / 1200;
-                if (window.innerHeight < 800) scale = Math.min(scale, window.innerHeight / 850);
+                // ESCALADO MATEMÁTICO INTELIGENTE
+                // El diseño base es 1200px de ancho y 800px de alto.
+                // Calculamos cuánto espacio tenemos disponible menos el header (60px) y un margen (40px).
+                
+                const availableWidth = window.innerWidth - 40;
+                const availableHeight = window.innerHeight - 100; // 60 header + 40 margin
+                
+                const scaleW = availableWidth / 1200;
+                const scaleH = availableHeight / 800;
+                
+                // Usamos el factor menor para asegurar que quepa en ambos ejes
+                let scale = Math.min(scaleW, scaleH);
+                
+                // Tope máximo de 1 (no pixelar) y mínimo de 0.5 (legibilidad)
+                if (scale > 1) scale = 1;
+                if (scale < 0.5) scale = 0.5;
+                
                 wrapper.style.transform = `scale(${scale})`;
             } else {
                 wrapper.style.transform = 'none';
             }
         }
 
-        // --- FUNCIONES ---
+        // --- MOTOR DE TIEMPO Y FASES ---
 
-        function startSession(btn) {
-            // Lógica del botón de inicio
+        // Función para Iniciar en Móvil
+        function startMobileSession(btn) {
             btn.disabled = true;
+            btn.style.backgroundColor = "var(--success)";
             btn.innerHTML = "SESIÓN ACTIVA <i class='bx bx-check'></i>";
             
             if (isMobile) {
-                // Ocultar Setup -> Mostrar F1
-                document.getElementById('p-setup').classList.remove('mobile-active');
-                
-                // Activar contenedor y contenido
-                document.getElementById('page-1').classList.add('mobile-active');
-                document.getElementById('phase-1').classList.add('mobile-active');
+                // Transición visual
+                setTimeout(() => {
+                    document.getElementById('p-setup').classList.remove('mobile-active');
+                    document.getElementById('page-1').classList.add('mobile-active'); 
+                    document.getElementById('phase-1').classList.add('mobile-active'); 
+                    toggleTimer();
+                }, 300);
             } else {
-                // Desktop: Solo cambiamos el estado del botón, el libro ya está abierto
+                // En escritorio, solo inicia el timer (el libro ya se abrió solo)
+                toggleTimer();
             }
-            toggleTimer();
         }
 
+        // Función Maestra de Cambio de Fase
         function nextPhase(n, btnElement) {
-            // Bloquear botón
+            // 1. Feedback Visual y Bloqueo
             btnElement.disabled = true;
+            btnElement.style.backgroundColor = "var(--success)";
             btnElement.innerHTML = "COMPLETADO <i class='bx bx-check'></i>";
 
-            // Guardar remanente
-            drift = phaseTime;
-            
+            // 2. Cálculo de Drift (Herencia de tiempo)
+            // phaseTime es lo que sobró (positivo) o faltó (negativo). 
+            // Se pasa tal cual a la siguiente fase.
+            let driftAdjustment = phaseTime; 
+            drift = phaseTime; // Para visualización global (simplificada)
+
+            // 3. Ejecutar Transición
             if (isMobile) {
-                handleMobileTransition(n);
+                handleMobileTransition(n, driftAdjustment);
             } else {
-                handleDesktopTransition(n, drift);
+                handleDesktopTransition(n, driftAdjustment);
             }
         }
 
@@ -424,60 +574,36 @@
                 setupTimer(2, adjustment);
             } 
             else if (n === 2) {
-                setupTimer(3, adjustment);
+                setupTimer(3, adjustment); // Solo cambio de timer, vista a la derecha
             } 
             else if (n === 3) {
                 document.getElementById('page-2').classList.add('turn');
                 setupTimer(4, adjustment);
             } 
             else if (n === 4) {
-                setupTimer(5, adjustment);
+                setupTimer(5, adjustment); // Solo cambio de timer, vista a la derecha
             } 
             else if (n === 5) {
                 document.getElementById('page-3').classList.add('turn');
-                finishClass();
+                finishClass(adjustment);
             }
         }
 
-        function handleMobileTransition(n) {
-            // Ocultar todo lo activo
+        function handleMobileTransition(n, adjustment) {
             document.querySelectorAll('.mobile-active').forEach(el => el.classList.remove('mobile-active'));
+            let nextPageId = '', nextContainerId = '', phaseNum = 0;
 
-            let nextPageId = '';
-            let nextContainerId = '';
-            let phaseNum = 0;
-
-            // Mapeo manual de fases para móvil (Single View)
-            if (n === 1) { 
-                phaseNum = 2; 
-                nextContainerId = 'page-1'; // Contenedor
-                nextPageId = 'phase-2';     // Contenido
-            }
-            else if (n === 2) { 
-                phaseNum = 3; 
-                nextContainerId = 'page-2'; 
-                nextPageId = 'phase-3'; 
-            }
-            else if (n === 3) { 
-                phaseNum = 4; 
-                nextContainerId = 'page-2'; 
-                nextPageId = 'phase-4'; 
-            }
-            else if (n === 4) { 
-                phaseNum = 5; 
-                nextContainerId = 'page-3'; 
-                nextPageId = 'phase-5'; 
-            }
-            else if (n === 5) { 
-                nextContainerId = 'page-3'; 
-                nextPageId = 'phase-final'; 
-                finishClass(); 
-            }
+            if (n === 1) { phaseNum = 2; nextContainerId = 'page-1'; nextPageId = 'phase-2'; }
+            else if (n === 2) { phaseNum = 3; nextContainerId = 'page-2'; nextPageId = 'phase-3'; }
+            else if (n === 3) { phaseNum = 4; nextContainerId = 'page-2'; nextPageId = 'phase-4'; }
+            else if (n === 4) { phaseNum = 5; nextContainerId = 'page-3'; nextPageId = 'phase-5'; }
+            else if (n === 5) { nextContainerId = 'page-3'; nextPageId = 'phase-final'; finishClass(adjustment); return;}
 
             if (nextPageId) {
                 document.getElementById(nextContainerId).classList.add('mobile-active');
                 document.getElementById(nextPageId).classList.add('mobile-active');
-                if (n < 5) setupTimer(phaseNum, drift);
+                setupTimer(phaseNum, adjustment);
+                window.scrollTo(0, 0);
             }
         }
 
@@ -486,9 +612,13 @@
             if (el) {
                 const min = parseInt(el.getAttribute('data-min'));
                 const baseSeconds = min * 60;
-                basePhaseTime = baseSeconds; 
+                
+                basePhaseTime = baseSeconds; // Guardar base original
+                
+                // Nuevo tiempo = Base original + Ajuste heredado
                 phaseTime = baseSeconds + adjustment;
-                if(!running) toggleTimer();
+                
+                if(!running) toggleTimer(); // Asegurar que corra
                 updateUI();
             }
         }
@@ -511,10 +641,12 @@
         }
 
         function updateUI() {
+            // Timer Global
             const tm = Math.floor(totalTime/60);
             const ts = totalTime%60;
             document.getElementById('t-total').innerText = `${tm}:${z(ts)}`;
             
+            // Timer Fase
             const pm = Math.floor(Math.abs(phaseTime)/60);
             const ps = Math.abs(phaseTime)%60;
             const el = document.getElementById('t-phase');
@@ -522,20 +654,45 @@
             if(phaseTime < 0) el.innerText = `-${pm}:${z(ps)}`;
             else el.innerText = `${pm}:${z(ps)}`;
 
+            // Colores Semánticos
             el.className = 't-val';
-            if (phaseTime < 0) el.classList.add('t-ph', 'overtime'); 
-            else if (phaseTime > basePhaseTime) el.classList.add('t-ph', 'bonus'); 
-            else el.classList.add('t-ph');
+            if (phaseTime < 0) {
+                el.classList.add('t-ph', 'overtime'); // Rojo (Debes tiempo)
+            } 
+            else if (phaseTime > basePhaseTime) {
+                el.classList.add('t-ph', 'bonus'); // Verde (Ahorraste tiempo)
+            } 
+            else {
+                el.classList.add('t-ph'); // Azul (Estándar)
+            }
         }
 
-        function finishClass() {
+        function finishClass(finalDrift) {
             clearInterval(timer);
             running = false;
-            document.getElementById('final-msg').innerText = drift >= 0 ? "¡Excelente gestión!" : "Revisa los tiempos.";
+            
+            // Mostrar mensaje final basado en el último drift
+            const msgEl = document.getElementById('final-msg');
+            if (finalDrift >= 0) {
+                msgEl.innerText = `¡TIEMPO OPTIMIZADO! (+${Math.floor(finalDrift/60)}m)`;
+                msgEl.style.color = "var(--success)";
+            } else {
+                msgEl.innerText = `LIGERO RETRASO (-${Math.floor(Math.abs(finalDrift)/60)}m)`;
+                msgEl.style.color = "var(--alert)";
+            }
+            
+            // En móvil, activar vista final
+            if (isMobile) {
+                document.getElementById('page-3').classList.add('mobile-active');
+                document.getElementById('phase-final').classList.add('mobile-active');
+            }
         }
 
+        // --- UTILIDADES ---
         function z(n){return n.toString().padStart(2,'0')}
         function toggleMode(){document.body.classList.toggle('dark-mode')}
+        function checkOrientationUtil() { checkDevice(); }
+        
     </script>
 </body>
 </html>
