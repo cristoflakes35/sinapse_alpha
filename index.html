@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!-- VIEWPORT IMPORTANTE: Evita zoom accidental y ajusta al ancho real -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cerebrum Flow Academy - Master Guide</title>
+    <title>Cerebrum Flow Academy - Mobile Compatible</title>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@400;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -35,7 +36,7 @@
             --border: #475569;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             display: flex; justify-content: center; align-items: center;
@@ -44,30 +45,29 @@
             transition: background 0.5s;
         }
 
-        /* --- HUD --- */
+        /* --- HUD (Barra Superior) --- */
         .hud {
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border); z-index: 9999;
-            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
         body.dark-mode .hud { background: rgba(15, 23, 42, 0.95); }
 
-        .brand h1 { font-family: 'Manrope'; font-weight: 800; color: var(--primary); font-size: 1rem; text-transform: uppercase; }
-        .brand p { font-size: 0.75rem; font-weight: 700; opacity: 0.7; color: var(--text-main); }
+        .brand h1 { font-family: 'Manrope'; font-weight: 800; color: var(--primary); font-size: 0.9rem; text-transform: uppercase; }
         
-        .controls { display: flex; gap: 10px; align-items: center; }
+        .controls { display: flex; gap: 8px; align-items: center; }
         .timer-box { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-        .t-sect { padding: 4px 10px; text-align: center; background: var(--page-bg); }
-        .t-lbl { font-size: 0.5rem; font-weight: 700; opacity: 0.6; display: block; }
-        .t-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 0.9rem; }
+        .t-sect { padding: 4px 8px; text-align: center; background: var(--page-bg); }
+        .t-lbl { font-size: 0.45rem; font-weight: 700; opacity: 0.6; display: block; }
+        .t-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 0.85rem; }
         .t-ph { color: var(--primary); border-left: 1px solid var(--border); transition: color 0.3s; }
         .t-ph.overtime { color: var(--alert); animation: pulse 1s infinite; }
         .t-ph.bonus { color: var(--success); }
-        .btn-icon { font-size: 1.5rem; cursor: pointer; color: var(--text-main); background: none; border: none; }
+        .btn-icon { font-size: 1.6rem; cursor: pointer; color: var(--text-main); background: none; border: none; padding: 0 5px; }
 
-        /* --- WRAPPER --- */
+        /* --- WRAPPER DESKTOP --- */
         .wrapper {
             position: relative; width: 72rem; height: 48rem; padding: 2rem;
             perspective: 250rem; margin-top: 60px;
@@ -82,7 +82,7 @@
             100% { opacity: 1; }
         }
 
-        /* --- LIBRO --- */
+        /* --- LIBRO 3D --- */
         .book { position: relative; width: 100%; height: 100%; display: flex; perspective: 250rem; }
 
         .cover {
@@ -107,7 +107,6 @@
         }
         .book.opened .book-page { pointer-events: auto; }
 
-        /* CAPAS */
         .page-left { left: 0; z-index: 5; border-radius: 10px 0 0 10px; }
         .page-right { right: 0; border-radius: 0 10px 10px 0; }
 
@@ -130,7 +129,7 @@
         .page-front { transform: rotateY(0deg); z-index: 2; }
         .page-back { transform: rotateY(180deg); z-index: 1; }
 
-        /* Contenidos */
+        /* --- ESTILOS INTERNOS --- */
         .phase-head { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .badge { background: var(--primary); color: white; padding: 4px 8px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
         h2 { color: var(--primary); font-family: 'Manrope'; font-size: 1.3rem; }
@@ -145,15 +144,16 @@
         .sys.ok { border-left: 3px solid var(--success); }
 
         .btn-next { 
-            float: right; background: var(--dark); color: white; padding: 10px 20px; 
+            float: right; background: var(--dark); color: white; padding: 12px 20px; 
             border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; 
             display: flex; align-items: center; gap: 5px; margin-top: 15px; font-size: 0.9rem;
+            width: fit-content;
         }
-        .btn-next:hover { background: var(--primary); transform: translateX(5px); }
-        .btn-next:disabled { background: var(--success); cursor: not-allowed; transform: none; opacity: 0.8; }
+        .btn-next:active { transform: scale(0.98); }
+        .btn-next:disabled { background: var(--success); cursor: not-allowed; transform: none; opacity: 0.9; }
 
-        .chk-item { background: var(--action-bg); border: 1px solid var(--border); padding: 8px; margin-bottom: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
-        .chk-box { width: 18px; height: 18px; border: 2px solid var(--primary); flex-shrink: 0; }
+        .chk-item { background: var(--action-bg); border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .chk-box { width: 20px; height: 20px; border: 2px solid var(--primary); flex-shrink: 0; }
         .chk-item.checked { opacity: 0.6; }
         .chk-item.checked .chk-box { background: var(--primary); }
 
@@ -161,29 +161,69 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-        /* --- RESPONSIVIDAD --- */
-        @media (orientation: portrait) {
-            body { overflow: hidden; align-items: flex-start; }
-            .hud { z-index: 9999; }
+        /* --- MÓVIL Y TABLET (Max Width 1024px) --- */
+        /* Eliminamos el 3D para asegurar compatibilidad en iOS/Android */
+        @media (max-width: 1024px) {
+            body { 
+                overflow-y: auto; 
+                display: block; 
+                padding-top: 60px; /* Espacio para el HUD */
+                height: auto;
+            }
+            
             .wrapper {
-                margin-top: 70px; width: 95vw; height: calc(100vh - 80px);
-                padding: 0; transform: none !important; animation: none; opacity: 1;
+                width: 100%; 
+                height: auto; 
+                padding: 15px; 
+                margin: 0;
+                transform: none !important; 
+                animation: none; 
+                opacity: 1;
+                perspective: none;
             }
-            .book { display: block; perspective: none; }
+
+            .book { display: block; perspective: none; width: 100%; height: auto;}
+            
+            /* Ocultar portada en móvil para ir directo al contenido */
             .cover { display: none; }
+
             .book-page {
-                position: relative; width: 100%; height: 100%; left: auto; top: auto;
-                transform: none !important; border: none; background: transparent; padding: 0;
-                display: none; 
+                position: relative; width: 100%; height: auto;
+                left: auto; top: auto;
+                transform: none !important;
+                border: none;
+                background: transparent;
+                padding: 0;
+                display: none; /* Ocultar todo */
+                opacity: 1 !important;
+                pointer-events: auto !important;
             }
-            .page-left { display: none; z-index: 100; border-radius: 8px; background: var(--page-bg); overflow-y: auto; }
-            .page-front, .page-back {
-                position: relative; width: 100%; height: 100%; transform: none !important;
-                backface-visibility: visible; display: none; border-radius: 8px; overflow-y: auto; padding: 1.5rem;
+
+            /* Estilos Tarjeta Móvil */
+            .page-left, .page-front, .page-back {
+                position: relative; width: 100%; height: auto;
+                transform: none !important;
+                backface-visibility: visible;
+                display: none; /* Ocultar caras */
+                background: var(--page-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             }
-            .mobile-active { display: block !important; animation: fadeIn 0.5s; }
+
+            /* El botón para iniciar sesión en móvil */
+            #p-setup.mobile-active { display: block; }
+            #p-setup .page-left { display: block; z-index: 100; }
+
+            /* Clase para mostrar la fase actual */
+            .mobile-active { display: block !important; animation: slideUp 0.4s ease-out; }
+            
+            .btn-next { width: 100%; justify-content: center; }
         }
-        @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+        @keyframes slideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
 
     </style>
 </head>
@@ -191,11 +231,10 @@
 
     <nav class="hud">
         <div class="brand">
-            <h1>CEREBRUM FLOW ACADEMY</h1>
-            <p>S1: NEURAL LINK</p>
+            <h1>CEREBRUM FLOW</h1>
         </div>
         <div class="controls">
-            <div id="drift" class="drift-pill" style="font-weight:bold; font-size:0.8rem; font-family:'Roboto Mono'">--:--</div>
+            <div id="drift" class="drift-pill" style="display:none;"></div> <!-- Oculto en móvil por espacio -->
             <div class="timer-box">
                 <div class="t-sect"><span class="t-lbl">TOTAL</span><span class="t-val" id="t-total">40:00</span></div>
                 <div class="t-sect t-ph"><span class="t-lbl">FASE</span><span class="t-val" id="t-phase">00:00</span></div>
@@ -208,12 +247,12 @@
     <div class="wrapper">
         <div class="book" id="book-container">
             
-            <!-- PORTADA -->
+            <!-- PORTADA (Desktop Only) -->
             <div class="cover" id="cover">
                 <i class='bx bxs-brain' style="font-size: 5rem; margin-bottom: 20px;"></i>
                 <h1>SYNAPSE 4.0</h1>
                 <h3>Guía Maestra</h3>
-                <p>Inicializando sistema...</p>
+                <p>Cargando sistema...</p>
             </div>
 
             <!-- IZQUIERDA: SETUP -->
@@ -228,11 +267,12 @@
                 <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Suelo: Zonas marcadas</div>
                 <br>
                 <div class="block">
-                    <span class="ctx">OBJETIVO DE SESIÓN</span>
-                    <p style="font-size:0.9rem">Establecer roles (Ingeniero/Operador) y validar la autoridad del alumno sobre la máquina.</p>
+                    <span class="ctx">OBJETIVO</span>
+                    <p style="font-size:0.9rem">Establecer roles (Ingeniero/Operador) y validar la autoridad del alumno.</p>
                 </div>
-                <!-- BOTÓN DE INICIO -->
-                <button class="btn-next" onclick="startMobileSession(this)" id="btn-start-mobile" style="width:100%; justify-content: center;">
+                
+                <!-- Botón de Inicio (Visible en Móvil o Desktop) -->
+                <button class="btn-next" onclick="startSession(this)" id="btn-start-session" style="width:100%; justify-content: center;">
                     INICIAR SESIÓN <i class='bx bx-rocket'></i>
                 </button>
             </div>
@@ -306,63 +346,71 @@
 
         // --- INIT ---
         window.addEventListener('load', () => {
-            checkOrientation();
-            window.addEventListener('resize', checkOrientation);
+            checkDevice();
+            window.addEventListener('resize', checkDevice);
 
-            // Desktop Anim
+            // Cargar datos Fase 1 (pero no mostrar aún en móvil)
+            const p1 = document.getElementById('phase-1');
+            phaseTime = parseInt(p1.getAttribute('data-min')) * 60;
+            basePhaseTime = phaseTime; 
+            updateUI();
+
+            // Animación Desktop
             if (!isMobile) {
                 const cover = document.getElementById('cover');
                 const bookContainer = document.getElementById('book-container');
                 setTimeout(() => { cover.classList.add('open'); bookContainer.classList.add('opened'); }, 3000); 
                 setTimeout(() => { cover.style.zIndex = -1; }, 4000);
             } else {
+                // Móvil: Mostrar Setup
                 document.getElementById('p-setup').classList.add('mobile-active');
             }
-
-            const p1 = document.getElementById('phase-1');
-            phaseTime = parseInt(p1.getAttribute('data-min')) * 60;
-            basePhaseTime = phaseTime; 
-            updateUI();
         });
 
-        function checkOrientation() {
+        function checkDevice() {
+            // Detectar si es pantalla pequeña (Móvil/Tablet vertical)
+            isMobile = window.innerWidth <= 1024;
+            
             const wrapper = document.querySelector('.wrapper');
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            isMobile = (width <= 768 && height > width);
-
             if (!isMobile) {
+                // Escalado para desktop
                 let scale = 1;
-                if (width < 1200) scale = width / 1200;
-                if (height < 800) scale = Math.min(scale, height / 850);
+                if (window.innerWidth < 1200) scale = window.innerWidth / 1200;
+                if (window.innerHeight < 800) scale = Math.min(scale, window.innerHeight / 850);
                 wrapper.style.transform = `scale(${scale})`;
             } else {
                 wrapper.style.transform = 'none';
             }
         }
 
-        // --- LÓGICA DE FASES ---
-        function startMobileSession(btn) {
-            // Cambiar visualmente el botón
+        // --- FUNCIONES ---
+
+        function startSession(btn) {
+            // Lógica del botón de inicio
             btn.disabled = true;
             btn.innerHTML = "SESIÓN ACTIVA <i class='bx bx-check'></i>";
             
-            // Transición Móvil
-            setTimeout(() => {
+            if (isMobile) {
+                // Ocultar Setup -> Mostrar F1
                 document.getElementById('p-setup').classList.remove('mobile-active');
-                document.getElementById('page-1').classList.add('mobile-active'); 
-                document.getElementById('phase-1').classList.add('mobile-active'); 
-                toggleTimer(); // Iniciar Timer
-            }, 500);
+                
+                // Activar contenedor y contenido
+                document.getElementById('page-1').classList.add('mobile-active');
+                document.getElementById('phase-1').classList.add('mobile-active');
+            } else {
+                // Desktop: Solo cambiamos el estado del botón, el libro ya está abierto
+            }
+            toggleTimer();
         }
 
         function nextPhase(n, btnElement) {
+            // Bloquear botón
             btnElement.disabled = true;
             btnElement.innerHTML = "COMPLETADO <i class='bx bx-check'></i>";
 
-            drift = phaseTime; 
-            updateDrift();
-
+            // Guardar remanente
+            drift = phaseTime;
+            
             if (isMobile) {
                 handleMobileTransition(n);
             } else {
@@ -392,16 +440,39 @@
         }
 
         function handleMobileTransition(n) {
+            // Ocultar todo lo activo
             document.querySelectorAll('.mobile-active').forEach(el => el.classList.remove('mobile-active'));
+
             let nextPageId = '';
             let nextContainerId = '';
             let phaseNum = 0;
 
-            if (n === 1) { phaseNum = 2; nextContainerId = 'page-1'; nextPageId = 'phase-2'; }
-            else if (n === 2) { phaseNum = 3; nextContainerId = 'page-2'; nextPageId = 'phase-3'; }
-            else if (n === 3) { phaseNum = 4; nextContainerId = 'page-2'; nextPageId = 'phase-4'; }
-            else if (n === 4) { phaseNum = 5; nextContainerId = 'page-3'; nextPageId = 'phase-5'; }
-            else if (n === 5) { nextContainerId = 'page-3'; nextPageId = 'phase-final'; finishClass(); }
+            // Mapeo manual de fases para móvil (Single View)
+            if (n === 1) { 
+                phaseNum = 2; 
+                nextContainerId = 'page-1'; // Contenedor
+                nextPageId = 'phase-2';     // Contenido
+            }
+            else if (n === 2) { 
+                phaseNum = 3; 
+                nextContainerId = 'page-2'; 
+                nextPageId = 'phase-3'; 
+            }
+            else if (n === 3) { 
+                phaseNum = 4; 
+                nextContainerId = 'page-2'; 
+                nextPageId = 'phase-4'; 
+            }
+            else if (n === 4) { 
+                phaseNum = 5; 
+                nextContainerId = 'page-3'; 
+                nextPageId = 'phase-5'; 
+            }
+            else if (n === 5) { 
+                nextContainerId = 'page-3'; 
+                nextPageId = 'phase-final'; 
+                finishClass(); 
+            }
 
             if (nextPageId) {
                 document.getElementById(nextContainerId).classList.add('mobile-active');
@@ -457,35 +528,14 @@
             else el.classList.add('t-ph');
         }
 
-        function updateDrift() {
-            const el = document.getElementById('drift');
-            const abs = Math.abs(drift);
-            const m = Math.floor(abs/60);
-            const s = abs%60;
-            if(drift > 0) {
-                el.innerText = `+${m}:${z(s)}`; el.style.color='var(--success)';
-            } else if (drift < 0) {
-                el.innerText = `-${m}:${z(s)}`; el.style.color='var(--alert)';
-            } else {
-                el.innerText = "--:--"; el.style.color='var(--text-main)';
-            }
-        }
-
         function finishClass() {
             clearInterval(timer);
             running = false;
-            document.getElementById('final-msg').innerText = drift >= 0 ? "¡Tiempo optimizado!" : "Ligero retraso.";
+            document.getElementById('final-msg').innerText = drift >= 0 ? "¡Excelente gestión!" : "Revisa los tiempos.";
         }
 
         function z(n){return n.toString().padStart(2,'0')}
         function toggleMode(){document.body.classList.toggle('dark-mode')}
-        function resizeBook() {
-            const wrapper = document.querySelector('.wrapper');
-            if(window.innerWidth > 768 && window.innerWidth < 1200) {
-                wrapper.style.transform = `scale(${window.innerWidth/1200})`;
-            }
-        }
-        window.addEventListener('resize', resizeBook);
     </script>
 </body>
 </html>
