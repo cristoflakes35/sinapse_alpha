@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cerebrum Flow Academy - Master Guide</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Nunito:wght@400;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0060ac;
+            --secondary: #00b4d8;
+            --dark: #0f172a;
+            --bg-body: #cbd5e1;
+            --bg-cover: linear-gradient(135deg, #0060ac, #00b4d8);
+            --page-bg: #f8fafc;
+            --text-main: #334155;
+            --border: #94a3b8;
+            --script-bg: #eff6ff;
+            --script-border: #3b82f6;
+            --action-bg: #ffffff;
+            --alert: #ef4444;
+            --success: #10b981;
+            --speed: 0.8s;
+        }
+
+        body.dark-mode {
+            --bg-body: #0f172a;
+            --page-bg: #1e293b;
+            --text-main: #f1f5f9;
+            --script-bg: rgba(59, 130, 246, 0.1);
+            --action-bg: #0f172a;
+            --border: #475569;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background: var(--bg-body); color: var(--text-main);
+            font-family: "Nunito", sans-serif; overflow: hidden;
+            transition: background 0.5s;
+        }
+
+        /* --- HUD --- */
+        .hud {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); z-index: 9999;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        body.dark-mode .hud { background: rgba(15, 23, 42, 0.95); }
+
+        .brand h1 { font-family: 'Manrope'; font-weight: 800; color: var(--primary); font-size: 1rem; text-transform: uppercase; }
+        .brand p { font-size: 0.75rem; font-weight: 700; opacity: 0.7; color: var(--text-main); }
+        
+        .controls { display: flex; gap: 10px; align-items: center; }
+        .timer-box { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+        .t-sect { padding: 4px 10px; text-align: center; background: var(--page-bg); }
+        .t-lbl { font-size: 0.5rem; font-weight: 700; opacity: 0.6; display: block; }
+        .t-val { font-family: 'Roboto Mono'; font-weight: 700; font-size: 0.9rem; }
+        .t-ph { color: var(--primary); border-left: 1px solid var(--border); transition: color 0.3s; }
+        .t-ph.overtime { color: var(--alert); animation: pulse 1s infinite; }
+        .t-ph.bonus { color: var(--success); }
+        .btn-icon { font-size: 1.5rem; cursor: pointer; color: var(--text-main); background: none; border: none; }
+
+        /* --- WRAPPER --- */
+        .wrapper {
+            position: relative; width: 72rem; height: 48rem; padding: 2rem;
+            perspective: 250rem; margin-top: 60px;
+            transform-origin: center top; 
+            transition: transform 0.3s ease;
+            animation: intro 4.5s forwards; 
+            opacity: 0; 
+        }
+
+        @keyframes intro {
+            0% { transform: translateY(100px) scale(0.5) rotateX(10deg); opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* --- LIBRO --- */
+        .book { position: relative; width: 100%; height: 100%; display: flex; perspective: 250rem; }
+
+        .cover {
+            position: absolute; top: 0; left: 0; width: 50%; height: 100%;
+            background: var(--bg-cover); border-radius: 10px 0 0 10px;
+            z-index: 500; 
+            transform-origin: right; transition: transform 1.5s cubic-bezier(.645, .045, .355, 1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; padding: 2rem; text-align: center;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.3);
+            backface-visibility: hidden;
+        }
+        .cover.open { transform: rotateY(180deg); z-index: -1; }
+
+        .book-page {
+            position: absolute; width: 50%; height: 100%;
+            background: var(--page-bg); display: flex; flex-direction: column;
+            padding: 2.5rem; border: 1px solid var(--border);
+            transition: transform var(--speed) cubic-bezier(.645, .045, .355, 1);
+            transform-origin: left; transform-style: preserve-3d;
+            pointer-events: none; 
+        }
+        .book.opened .book-page { pointer-events: auto; }
+
+        /* CAPAS */
+        .page-left { left: 0; z-index: 5; border-radius: 10px 0 0 10px; }
+        .page-right { right: 0; border-radius: 0 10px 10px 0; }
+
+        #page-1 { z-index: 30; }
+        #page-2 { z-index: 20; }
+        #page-3 { z-index: 10; }
+
+        #page-1.turn { z-index: 40; } 
+        #page-2.turn { z-index: 50; } 
+        #page-3.turn { z-index: 60; } 
+
+        .page-right.turn { transform: rotateY(-180deg); }
+
+        .page-front, .page-back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 2rem; backface-visibility: hidden;
+            background-color: var(--page-bg); 
+            overflow-y: auto; border-left: 1px solid var(--border);
+        }
+        .page-front { transform: rotateY(0deg); z-index: 2; }
+        .page-back { transform: rotateY(180deg); z-index: 1; }
+
+        /* Contenidos */
+        .phase-head { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .badge { background: var(--primary); color: white; padding: 4px 8px; border-radius: 10px; font-weight: bold; font-size: 0.7rem; }
+        h2 { color: var(--primary); font-family: 'Manrope'; font-size: 1.3rem; }
+
+        .block { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid var(--border); }
+        .ctx { font-size: 0.65rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .script { background: var(--script-bg); border-left: 4px solid var(--script-border); padding: 10px; border-radius: 0 8px 8px 8px; margin-bottom: 8px; position: relative; }
+        .script::before { content: "🗣️ DI:"; position: absolute; top: -8px; left: 0; background: var(--script-border); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 3px; }
+        .txt { font-size: 0.95rem; line-height: 1.4; color: var(--text-main); }
+        .action { background: var(--action-bg); border: 1px dashed var(--border); padding: 8px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .sys { background: #1e293b; color: white; padding: 8px; border-radius: 4px; font-family: 'Roboto Mono'; font-size: 0.8rem; margin: 8px 0; display: flex; align-items: center; gap: 10px; }
+        .sys.ok { border-left: 3px solid var(--success); }
+
+        .btn-next { 
+            float: right; background: var(--dark); color: white; padding: 10px 20px; 
+            border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; 
+            display: flex; align-items: center; gap: 5px; margin-top: 15px; font-size: 0.9rem;
+        }
+        .btn-next:hover { background: var(--primary); transform: translateX(5px); }
+        .btn-next:disabled { background: var(--success); cursor: not-allowed; transform: none; opacity: 0.8; }
+
+        .chk-item { background: var(--action-bg); border: 1px solid var(--border); padding: 8px; margin-bottom: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
+        .chk-box { width: 18px; height: 18px; border: 2px solid var(--primary); flex-shrink: 0; }
+        .chk-item.checked { opacity: 0.6; }
+        .chk-item.checked .chk-box { background: var(--primary); }
+
+        @keyframes pulse { 50% { opacity: 0.5; } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* --- RESPONSIVIDAD --- */
+        @media (orientation: portrait) {
+            body { overflow: hidden; align-items: flex-start; }
+            .hud { z-index: 9999; }
+            .wrapper {
+                margin-top: 70px; width: 95vw; height: calc(100vh - 80px);
+                padding: 0; transform: none !important; animation: none; opacity: 1;
+            }
+            .book { display: block; perspective: none; }
+            .cover { display: none; }
+            .book-page {
+                position: relative; width: 100%; height: 100%; left: auto; top: auto;
+                transform: none !important; border: none; background: transparent; padding: 0;
+                display: none; 
+            }
+            .page-left { display: none; z-index: 100; border-radius: 8px; background: var(--page-bg); overflow-y: auto; }
+            .page-front, .page-back {
+                position: relative; width: 100%; height: 100%; transform: none !important;
+                backface-visibility: visible; display: none; border-radius: 8px; overflow-y: auto; padding: 1.5rem;
+            }
+            .mobile-active { display: block !important; animation: fadeIn 0.5s; }
+        }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <nav class="hud">
+        <div class="brand">
+            <h1>CEREBRUM FLOW ACADEMY</h1>
+            <p>S1: NEURAL LINK</p>
+        </div>
+        <div class="controls">
+            <div id="drift" class="drift-pill" style="font-weight:bold; font-size:0.8rem; font-family:'Roboto Mono'">--:--</div>
+            <div class="timer-box">
+                <div class="t-sect"><span class="t-lbl">TOTAL</span><span class="t-val" id="t-total">40:00</span></div>
+                <div class="t-sect t-ph"><span class="t-lbl">FASE</span><span class="t-val" id="t-phase">00:00</span></div>
+            </div>
+            <button class="btn-icon" onclick="toggleMode()"><i class='bx bx-moon'></i></button>
+            <button class="btn-icon" onclick="toggleTimer()" style="color:var(--primary)"><i class='bx bx-play-circle' id="play-btn"></i></button>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <div class="book" id="book-container">
+            
+            <!-- PORTADA -->
+            <div class="cover" id="cover">
+                <i class='bx bxs-brain' style="font-size: 5rem; margin-bottom: 20px;"></i>
+                <h1>SYNAPSE 4.0</h1>
+                <h3>Guía Maestra</h3>
+                <p>Inicializando sistema...</p>
+            </div>
+
+            <!-- IZQUIERDA: SETUP -->
+            <div class="book-page page-left" id="p-setup">
+                <div class="phase-head">
+                    <h2>⚙️ SETUP</h2>
+                    <span class="badge" style="background:#64748b">PREVIA</span>
+                </div>
+                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Pantalla: Slide ITS Dormido</div>
+                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Mesa: Oculta con tela</div>
+                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Audio: Música Upbeat</div>
+                <div class="chk-item" onclick="this.classList.toggle('checked')"><div class="chk-box"></div> Suelo: Zonas marcadas</div>
+                <br>
+                <div class="block">
+                    <span class="ctx">OBJETIVO DE SESIÓN</span>
+                    <p style="font-size:0.9rem">Establecer roles (Ingeniero/Operador) y validar la autoridad del alumno sobre la máquina.</p>
+                </div>
+                <!-- BOTÓN DE INICIO -->
+                <button class="btn-next" onclick="startMobileSession(this)" id="btn-start-mobile" style="width:100%; justify-content: center;">
+                    INICIAR SESIÓN <i class='bx bx-rocket'></i>
+                </button>
+            </div>
+
+            <!-- HOJA 1 -->
+            <div class="book-page page-right" id="page-1">
+                <div class="page-front" id="phase-1" data-min="8">
+                    <div class="phase-head"><h2>INPUT</h2> <span class="badge">FASE 1 • 08 MIN</span></div>
+                    <div class="block"><span class="ctx">⚡ BIENVENIDA</span><div class="action"><i class='bx bx-door-open'></i> Recibir con energía.</div><div class="script"><div class="txt">"¡Buenos días! ¡Qué energía! Levanten la mano los que vienen listos para inventar cosas increíbles... ¡Pasen y permanezcan de pie!"</div></div></div>
+                    <div class="block"><span class="ctx">🏛️ CONTEXTO</span><div class="script"><div class="txt">"Bienvenidos a <strong>Cerebrum Flow Academy</strong>. Aquí venimos a enseñarle a nuestro cerebro a controlar la tecnología."</div></div></div>
+                    <div class="block"><span class="ctx">🆔 ROLES</span><div class="script"><div class="txt">"Yo soy el INGENIERO. Ustedes son <strong>OPERADORES</strong>. La máquina no piensa sola; el Operador tiene el control."</div></div></div>
+                    <div class="block"><span class="ctx">🗺️ ZONAS</span><div class="action"><i class='bx bx-map'></i> Señalar zonas.</div><div class="script"><div class="txt">"AZUL: Pensamos. NARANJA: Construimos. VERDE: Robot se mueve."</div></div><div class="action"><strong>Verificación:</strong> ¿Quién manda? ¡EL OPERADOR!</div></div>
+                    <button class="btn-next" onclick="nextPhase(1, this)">COMPLETAR FASE 1 <i class='bx bx-chevron-right'></i></button>
+                </div>
+                <div class="page-back" id="phase-2" data-min="7">
+                    <div class="phase-head"><h2>PROCESSING</h2> <span class="badge">FASE 2 • 07 MIN</span></div>
+                    <div class="block"><span class="ctx">✨ LA REVELACIÓN</span><div class="action"><i class='bx bxs-layer'></i> Quitar tela. Mostrar herramientas.</div><div class="script"><div class="txt">"Miren sus herramientas. ¿Quién quiere usar el poder del Operador? ¡Digan YO!"</div></div></div>
+                    <div class="block"><span class="ctx">🔋 ACTIVACIÓN</span><div class="sys">🖥️ PANTALLA: ITS Gris (Dormido)</div><div class="script"><div class="txt">"A la cuenta de 3: ¡DESPIERTA CEREBRUM!"</div></div></div>
+                    <div class="block"><span class="ctx">🎉 REACCIÓN</span><div class="sys ok">🔊 SONIDO: Éxito + ITS Color</div><div class="script"><div class="txt"><strong>ITS:</strong> "Sistemas al 100%. Saluden a la cámara en 3, 2, 1..."</div></div></div>
+                    <button class="btn-next" onclick="nextPhase(2, this)">COMPLETAR FASE 2 <i class='bx bx-chevron-right'></i></button>
+                </div>
+            </div>
+
+            <!-- HOJA 2 -->
+            <div class="book-page page-right" id="page-2">
+                <div class="page-front" id="phase-3" data-min="15">
+                    <div class="phase-head"><h2>CONCEPT</h2> <span class="badge">FASE 3 • 15 MIN</span></div>
+                    <div class="block"><span class="ctx">🧠 DEFINICIÓN</span><div class="script"><div class="txt">"Un ALGORITMO es una lista de pasos en orden. ¡Como una receta!"</div></div><div class="action"><i class='bx bx-music'></i> Ritmo: ¡AL-GO-RIT-MO!</div></div>
+                    <div class="block"><span class="ctx">✅ DINÁMICA 1</span><div class="script"><div class="txt">"Sigan el algoritmo de la pantalla."</div></div><div class="sys">🖥️ Aplauso -> Silencio -> Saludo</div></div>
+                    <div class="block" style="background:rgba(239,68,68,0.1); padding:10px; border-radius:8px;"><span class="ctx" style="color:var(--alert)">❌ DINÁMICA 2: BUG</span><div class="script"><div class="txt">"Sigan mi algoritmo: 1. Sacar lengua. 2. Espalda a pared. 3. Aplaudir sin despegar manos de la pared."</div></div><div class="action"><i class='bx bxs-error'></i> Caos y risas.</div><div class="script"><div class="txt">"Fue imposible. Cuando el algoritmo falla, se llama BUG."</div></div></div>
+                    <button class="btn-next" onclick="nextPhase(3, this)">COMPLETAR FASE 3 <i class='bx bx-chevron-right'></i></button>
+                </div>
+                <div class="page-back" id="phase-4" data-min="5">
+                    <div class="phase-head"><h2>SHELL DESIGN</h2> <span class="badge">FASE 4 • 05 MIN</span></div>
+                    <div class="block"><span class="ctx">🧘 TRANSICIÓN</span><div class="script"><div class="txt">"Siéntense. Para operar la próxima semana, necesitan su Credencial."</div></div><div class="action"><i class='bx bx-file'></i> Entregar hojas ID.</div></div>
+                    <div class="block"><span class="ctx">🎨 ACTIVIDAD</span><div class="script"><div class="txt">"Dibujen su cerebro lleno de energía de Operador. Tienen 4 minutos."</div></div></div>
+                    <button class="btn-next" onclick="nextPhase(4, this)">COMPLETAR FASE 4 <i class='bx bx-chevron-right'></i></button>
+                </div>
+            </div>
+
+            <!-- HOJA 3 -->
+            <div class="book-page page-right" id="page-3">
+                <div class="page-front" id="phase-5" data-min="5">
+                    <div class="phase-head"><h2>OUTPUT</h2> <span class="badge">FASE 5 • 05 MIN</span></div>
+                    <div class="block"><span class="ctx">📤 UPLOAD</span><div class="script"><div class="txt">"Muestren su hoja a la pantalla."</div></div><div class="sys ok">🔊 SONIDO: Data Uploaded</div></div>
+                    <div class="block"><span class="ctx">🔄 REPASO FINAL</span><div class="script"><div class="txt">"Si falla es un... ¡BUG! ¿Quién manda? ¡EL OPERADOR!"</div></div></div>
+                    <button class="btn-next" onclick="nextPhase(5, this)">FINALIZAR SESIÓN <i class='bx bx-flag'></i></button>
+                </div>
+                <div class="page-back" id="phase-final">
+                    <div style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <i class='bx bxs-trophy' style="font-size:5rem; color:orange; margin-bottom:20px;"></i>
+                        <h2>¡Sesión Finalizada!</h2>
+                        <p id="final-msg" style="margin:10px 0; font-weight:bold;">...</p>
+                        <button class="btn-next" onclick="location.reload()">REINICIAR</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- VARS ---
+        let totalTime = 40 * 60;
+        let phaseTime = 0;
+        let drift = 0; 
+        let timer = null;
+        let running = false;
+        let basePhaseTime = 0;
+        let isMobile = false;
+
+        // --- INIT ---
+        window.addEventListener('load', () => {
+            checkOrientation();
+            window.addEventListener('resize', checkOrientation);
+
+            // Desktop Anim
+            if (!isMobile) {
+                const cover = document.getElementById('cover');
+                const bookContainer = document.getElementById('book-container');
+                setTimeout(() => { cover.classList.add('open'); bookContainer.classList.add('opened'); }, 3000); 
+                setTimeout(() => { cover.style.zIndex = -1; }, 4000);
+            } else {
+                document.getElementById('p-setup').classList.add('mobile-active');
+            }
+
+            const p1 = document.getElementById('phase-1');
+            phaseTime = parseInt(p1.getAttribute('data-min')) * 60;
+            basePhaseTime = phaseTime; 
+            updateUI();
+        });
+
+        function checkOrientation() {
+            const wrapper = document.querySelector('.wrapper');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            isMobile = (width <= 768 && height > width);
+
+            if (!isMobile) {
+                let scale = 1;
+                if (width < 1200) scale = width / 1200;
+                if (height < 800) scale = Math.min(scale, height / 850);
+                wrapper.style.transform = `scale(${scale})`;
+            } else {
+                wrapper.style.transform = 'none';
+            }
+        }
+
+        // --- LÓGICA DE FASES ---
+        function startMobileSession(btn) {
+            // Cambiar visualmente el botón
+            btn.disabled = true;
+            btn.innerHTML = "SESIÓN ACTIVA <i class='bx bx-check'></i>";
+            
+            // Transición Móvil
+            setTimeout(() => {
+                document.getElementById('p-setup').classList.remove('mobile-active');
+                document.getElementById('page-1').classList.add('mobile-active'); 
+                document.getElementById('phase-1').classList.add('mobile-active'); 
+                toggleTimer(); // Iniciar Timer
+            }, 500);
+        }
+
+        function nextPhase(n, btnElement) {
+            btnElement.disabled = true;
+            btnElement.innerHTML = "COMPLETADO <i class='bx bx-check'></i>";
+
+            drift = phaseTime; 
+            updateDrift();
+
+            if (isMobile) {
+                handleMobileTransition(n);
+            } else {
+                handleDesktopTransition(n, drift);
+            }
+        }
+
+        function handleDesktopTransition(n, adjustment) {
+            if (n === 1) {
+                document.getElementById('page-1').classList.add('turn');
+                setupTimer(2, adjustment);
+            } 
+            else if (n === 2) {
+                setupTimer(3, adjustment);
+            } 
+            else if (n === 3) {
+                document.getElementById('page-2').classList.add('turn');
+                setupTimer(4, adjustment);
+            } 
+            else if (n === 4) {
+                setupTimer(5, adjustment);
+            } 
+            else if (n === 5) {
+                document.getElementById('page-3').classList.add('turn');
+                finishClass();
+            }
+        }
+
+        function handleMobileTransition(n) {
+            document.querySelectorAll('.mobile-active').forEach(el => el.classList.remove('mobile-active'));
+            let nextPageId = '';
+            let nextContainerId = '';
+            let phaseNum = 0;
+
+            if (n === 1) { phaseNum = 2; nextContainerId = 'page-1'; nextPageId = 'phase-2'; }
+            else if (n === 2) { phaseNum = 3; nextContainerId = 'page-2'; nextPageId = 'phase-3'; }
+            else if (n === 3) { phaseNum = 4; nextContainerId = 'page-2'; nextPageId = 'phase-4'; }
+            else if (n === 4) { phaseNum = 5; nextContainerId = 'page-3'; nextPageId = 'phase-5'; }
+            else if (n === 5) { nextContainerId = 'page-3'; nextPageId = 'phase-final'; finishClass(); }
+
+            if (nextPageId) {
+                document.getElementById(nextContainerId).classList.add('mobile-active');
+                document.getElementById(nextPageId).classList.add('mobile-active');
+                if (n < 5) setupTimer(phaseNum, drift);
+            }
+        }
+
+        function setupTimer(ph, adjustment = 0) {
+            const el = document.getElementById(`phase-${ph}`);
+            if (el) {
+                const min = parseInt(el.getAttribute('data-min'));
+                const baseSeconds = min * 60;
+                basePhaseTime = baseSeconds; 
+                phaseTime = baseSeconds + adjustment;
+                if(!running) toggleTimer();
+                updateUI();
+            }
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('play-btn');
+            if (running) {
+                clearInterval(timer);
+                running = false;
+                btn.className = 'bx bx-play-circle';
+            } else {
+                timer = setInterval(() => {
+                    totalTime--;
+                    phaseTime--;
+                    updateUI();
+                }, 1000);
+                running = true;
+                btn.className = 'bx bx-pause-circle';
+            }
+        }
+
+        function updateUI() {
+            const tm = Math.floor(totalTime/60);
+            const ts = totalTime%60;
+            document.getElementById('t-total').innerText = `${tm}:${z(ts)}`;
+            
+            const pm = Math.floor(Math.abs(phaseTime)/60);
+            const ps = Math.abs(phaseTime)%60;
+            const el = document.getElementById('t-phase');
+            
+            if(phaseTime < 0) el.innerText = `-${pm}:${z(ps)}`;
+            else el.innerText = `${pm}:${z(ps)}`;
+
+            el.className = 't-val';
+            if (phaseTime < 0) el.classList.add('t-ph', 'overtime'); 
+            else if (phaseTime > basePhaseTime) el.classList.add('t-ph', 'bonus'); 
+            else el.classList.add('t-ph');
+        }
+
+        function updateDrift() {
+            const el = document.getElementById('drift');
+            const abs = Math.abs(drift);
+            const m = Math.floor(abs/60);
+            const s = abs%60;
+            if(drift > 0) {
+                el.innerText = `+${m}:${z(s)}`; el.style.color='var(--success)';
+            } else if (drift < 0) {
+                el.innerText = `-${m}:${z(s)}`; el.style.color='var(--alert)';
+            } else {
+                el.innerText = "--:--"; el.style.color='var(--text-main)';
+            }
+        }
+
+        function finishClass() {
+            clearInterval(timer);
+            running = false;
+            document.getElementById('final-msg').innerText = drift >= 0 ? "¡Tiempo optimizado!" : "Ligero retraso.";
+        }
+
+        function z(n){return n.toString().padStart(2,'0')}
+        function toggleMode(){document.body.classList.toggle('dark-mode')}
+        function resizeBook() {
+            const wrapper = document.querySelector('.wrapper');
+            if(window.innerWidth > 768 && window.innerWidth < 1200) {
+                wrapper.style.transform = `scale(${window.innerWidth/1200})`;
+            }
+        }
+        window.addEventListener('resize', resizeBook);
+    </script>
+</body>
+</html>
